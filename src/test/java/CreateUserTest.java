@@ -1,53 +1,44 @@
+import Client.UserCommonSteps;
 import Models.User;
-import io.qameta.allure.Step;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static io.restassured.RestAssured.given;
+
+import static Config.Url.*;
 import static org.hamcrest.Matchers.equalTo;
 
-public class CreateUserTest {
+public class CreateUserTest extends UserCommonSteps {
     User user;
-    String userRegisterLink = "/api/auth/register";
-    String accessToken;
+    String accessToken = "";
 
     @Before
     public void setUp() {
-        RestAssured.baseURI = "https://stellarburgers.nomoreparties.site";
+        RestAssured.baseURI = URL;
         user = new User("Toshiro_14@yandex.ru", "qwerty999", "Хицугая");
     }
-
-    @Step("Создаём пользователя")
-    public Response createUser() {
-        Response userPostResult = given()
-                .header("Content-type", "application/json")
-                .body(user)
-                .post(userRegisterLink);
-        accessToken = userPostResult.then().extract().path("accessToken");
-        return userPostResult;
-    }
-
 
 
     @Test
     @DisplayName("Проверяем код и тело ответа при успешном создании пользователя")
     public void checkStatusAndBodySuccessCreate() {
-        createUser()
+        Response createUserResponce = createUser(user);
+        createUserResponce
                 .then()
                 .assertThat()
                 .statusCode(200)
                 .and()
                 .body("success", equalTo(true));
+        accessToken = createUserResponce.then().extract().path("accessToken");
     }
 
     @Test
-    @DisplayName("Проверяем, что нельзя создать двух одинаковых курьеров")
+    @DisplayName("Проверяем, что нельзя создать двух одинаковых пользователей")
     public void checkStatusCodeWhenDuplicateUserCreate() {
-        createUser();
-        createUser()
+        String accessToken1 = createUser(user).then().extract().path("accessToken");
+        createUser(user)
                 .then()
                 .statusCode(403)
                 .and()
@@ -55,13 +46,15 @@ public class CreateUserTest {
                 .body("success", equalTo(false))
                 .and()
                 .body("message", equalTo("User already exists"));
+        //получаем токен, чтобы потом удалить пользователя
+        accessToken = accessToken1;
     }
 
     @Test
     @DisplayName("Проверяем, что необходимо заполнять обязательное поле: email")
     public void checkStatusCodeCreateWithoutLogin() {
         user.setEmail("");
-        createUser()
+        createUser(user)
                 .then()
                 .statusCode(403)
                 .and()
@@ -75,7 +68,7 @@ public class CreateUserTest {
     @DisplayName("Проверяем, что необходимо заполнять обязательное поле: password")
     public void checkStatusCodeCreateWithoutPassword() {
         user.setEmail("");
-        createUser()
+        createUser(user)
                 .then()
                 .statusCode(403)
                 .and()
@@ -89,7 +82,7 @@ public class CreateUserTest {
     @DisplayName("Проверяем, что необходимо заполнять обязательное поле: name")
     public void checkStatusCodeCreateWithoutName() {
         user.setName("");
-        createUser()
+        createUser(user)
                 .then()
                 .statusCode(403)
                 .and()
@@ -103,7 +96,7 @@ public class CreateUserTest {
     @DisplayName("Проверяем, что необходимо заполнять обязательное поле: email")
     public void checkStatusCodeCreateWithNullLogin() {
         user.setEmail(null);
-        createUser()
+        createUser(user)
                 .then()
                 .statusCode(403)
                 .and()
@@ -117,7 +110,7 @@ public class CreateUserTest {
     @DisplayName("Проверяем, что необходимо заполнять обязательное поле: password")
     public void checkStatusCodeCreateWithNullPassword() {
         user.setPassword(null);
-        createUser()
+        createUser(user)
                 .then()
                 .statusCode(403)
                 .and()
@@ -131,7 +124,7 @@ public class CreateUserTest {
     @DisplayName("Проверяем, что необходимо заполнять обязательное поле: name")
     public void checkStatusCodeCreateWithNullName() {
         user.setName(null);
-        createUser()
+        createUser(user)
                 .then()
                 .statusCode(403)
                 .and()
@@ -144,14 +137,7 @@ public class CreateUserTest {
     @After
     public void deleteUser() {
         if (accessToken != null) {
-            Response a = given()
-                    .header("Authorization", accessToken)
-                    .header("Content-type", "application/json")
-                    .and()
-                    .delete("https://stellarburgers.nomoreparties.site/api/auth/user");
-        System.out.println(a.getStatusCode());
-        System.out.println(a.getBody().print());
-        System.out.println(accessToken);
+            deleteUser(accessToken);
         }
     }
 }
