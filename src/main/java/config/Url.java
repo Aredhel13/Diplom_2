@@ -1,4 +1,4 @@
-package Config;
+package config;
 
 public class Url {
     public static String URL = "https://stellarburgers.nomoreparties.site";

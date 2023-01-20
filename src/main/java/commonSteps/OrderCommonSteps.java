@@ -1,10 +1,10 @@
-package Client;
+package commonSteps;
 
-import Models.Order;
+import models.Order;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
-import static Config.Url.ORDERS;
+import static config.Url.ORDERS;
 import static io.restassured.RestAssured.given;
 
 public class OrderCommonSteps extends UserCommonSteps{

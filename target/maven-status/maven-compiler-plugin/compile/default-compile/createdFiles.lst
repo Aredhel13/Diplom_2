@@ -1,6 +1,5 @@
-Models\Ingredient.class
-Models\Order.class
-Client\OrderCommonSteps.class
-Config\Url.class
-Models\User.class
-Client\UserCommonSteps.class
+models\User.class
+config\Url.class
+commonSteps\UserCommonSteps.class
+commonSteps\OrderCommonSteps.class
+models\Order.class

@@ -1,12 +1,12 @@
-import Client.UserCommonSteps;
-import Models.User;
+import commonSteps.UserCommonSteps;
+import models.User;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static Config.Url.*;
+import static config.Url.*;
 import static org.hamcrest.Matchers.equalTo;
 
 public class UpdateUserDataTest extends UserCommonSteps {

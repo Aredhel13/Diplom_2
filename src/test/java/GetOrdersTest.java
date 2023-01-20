@@ -1,6 +1,6 @@
-import Client.OrderCommonSteps;
-import Models.Order;
-import Models.User;
+import commonSteps.OrderCommonSteps;
+import models.Order;
+import models.User;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import org.junit.After;
@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static Config.Url.URL;
+import static config.Url.URL;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.equalTo;
 
