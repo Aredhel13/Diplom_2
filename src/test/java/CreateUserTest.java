@@ -3,6 +3,7 @@ import models.User;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,21 +18,24 @@ public class CreateUserTest extends UserCommonSteps {
     @Before
     public void setUp() {
         RestAssured.baseURI = URL;
-        user = new User("Toshiro_14@yandex.ru", "qwerty999", "Хицугая");
+        String email = RandomStringUtils.randomAlphanumeric(10);
+        String password = RandomStringUtils.randomAlphanumeric(8);
+        String name = RandomStringUtils.randomAlphabetic(20);
+        user = new User(email +"@yandex.ru", password, name);
     }
 
 
     @Test
     @DisplayName("Проверяем код и тело ответа при успешном создании пользователя")
     public void checkStatusAndBodySuccessCreate() {
-        Response createUserResponce = createUser(user);
-        createUserResponce
+        Response createUserResponse = createUser(user);
+        createUserResponse
                 .then()
                 .assertThat()
                 .statusCode(200)
                 .and()
                 .body("success", equalTo(true));
-        accessToken = createUserResponce.then().extract().path("accessToken");
+        accessToken = createUserResponse.then().extract().path("accessToken");
     }
 
     @Test
